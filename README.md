@@ -30,3 +30,7 @@ summer prices might be different from winter prices)
 - API should show how many spaces for given date is available (per day)
 - Parking date From - date when car is being dropped off at the car park
 - Parking date To - date time when car will be picked from the car park
+
+------------
+
+![Example](/example.jpg)

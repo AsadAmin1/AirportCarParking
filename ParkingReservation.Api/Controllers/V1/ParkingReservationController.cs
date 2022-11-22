@@ -17,6 +17,7 @@ namespace ParkingReservation.Api.v1.Controllers
         }
 
         [HttpGet]
+        [ApiVersion("1.0")]
         public async Task<IActionResult> Get()
         {
             return await Task.FromResult(Ok("Hello World"));

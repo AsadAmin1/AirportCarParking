@@ -12,15 +12,15 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "parkingreservation",
+      "launchUrl": "api/v1/parkingreservation",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AirportCarParking": {
+    "ParkingReservation": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "ParkingReservation",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

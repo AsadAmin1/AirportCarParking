@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace ParkingReservation.Api.Controllers
+namespace ParkingReservation.Api.v1.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/v{version:apiVersion}/[controller]")]
     public class ParkingReservationController : ControllerBase
     {
         private readonly ILogger<ParkingReservationController> _logger;

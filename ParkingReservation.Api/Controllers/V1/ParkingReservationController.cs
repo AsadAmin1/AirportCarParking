@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -16,9 +17,9 @@ namespace ParkingReservation.Api.v1.Controllers
         }
 
         [HttpGet]
-        public ActionResult<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return "Hello World";
+            return await Task.FromResult(Ok("Hello World"));
         }
     }
 }

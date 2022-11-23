@@ -2,8 +2,8 @@
 {
     public class DateRange
     {
-        public DateTime StartTime { get; }
-        public DateTime EndTime { get; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public DateRange(DateTime startTime, DateTime endTime)
         {

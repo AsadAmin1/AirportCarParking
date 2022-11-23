@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ParkingReservation.Core;
-using ParkingReservation.Core.Models;
+using ParkingReservation.Api.Models;
+using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 
 namespace ParkingReservation.Api.v1.Controllers
@@ -14,13 +14,13 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Private Fields
 
         private readonly ILogger<ParkingReservationController> _logger;
-        private readonly AvailabilityService _availabilityService;
+        private readonly IAvailabilityService _availabilityService;
 
         #region
 
         #region Constructors
 
-        public ParkingReservationController(ILogger<ParkingReservationController> logger, AvailabilityService availabilityService)
+        public ParkingReservationController(ILogger<ParkingReservationController> logger, IAvailabilityService availabilityService)
         {
             _logger = logger;
             _availabilityService = availabilityService;
@@ -31,10 +31,10 @@ namespace ParkingReservation.Api.v1.Controllers
         #endregion Public Methods
 
         [HttpGet]
-        [ApiVersion("1.0")]
-        public async Task<IActionResult> GetAvailability(DateRange dateRange)
+        public async Task<IActionResult> GetAvailability([FromQuery]DateRange dateRange)
         {
-            return Ok(await _availabilityService.GetAvailability(dateRange));
+            var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
+            return Ok(await _availabilityService.GetAvailability(domainDateRange));
         }
 
         #endregion

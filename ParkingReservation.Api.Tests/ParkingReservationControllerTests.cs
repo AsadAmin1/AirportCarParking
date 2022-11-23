@@ -4,7 +4,7 @@ using Moq;
 using ParkingReservation.Api.v1.Controllers;
 using Microsoft.AspNetCore.Http;
 using ParkingReservation.Core;
-using ParkingReservation.Core.Models;
+using ParkingReservation.Api.Models;
 
 namespace ParkingReservation.Api.Tests
 {
@@ -28,7 +28,10 @@ namespace ParkingReservation.Api.Tests
             var startTime = new DateTime(2023, 1, 2, 13, 0, 0);
             var endTime = new DateTime(2023, 1, 9, 13, 0, 0);
 
-            var dateRange = new DateRange(startTime, endTime);
+            var dateRange = new DateRange{
+                StartTime= startTime,
+                EndTime = endTime
+            };
 
             var controller = new ParkingReservationController(_mockLogger, _availabilityService);
             var actionResult = await controller.GetAvailability(dateRange);

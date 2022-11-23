@@ -3,11 +3,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ParkingReservation.Core;
+using ParkingReservation.Core.Interfaces;
 
 namespace ParkingReservation.Api
 {
-    public class Startup
+    public class Startup       
     {
+        // Read from config
+        private const int totalCapacity = 10;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,6 +26,8 @@ namespace ParkingReservation.Api
             services.AddControllers();
             services.AddVersioning();
             services.AddSwaggerGen();
+
+            services.AddSingleton<IAvailabilityService>((services) => new AvailabilityService(totalCapacity));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

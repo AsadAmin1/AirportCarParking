@@ -1,8 +1,9 @@
-﻿using ParkingReservation.Core.Models;
+﻿using ParkingReservation.Core.Interfaces;
+using ParkingReservation.Core.Models;
 
 namespace ParkingReservation.Core
 {
-    public class AvailabilityService
+    public class AvailabilityService : IAvailabilityService
     {
         private readonly int _totalCapacity;
 

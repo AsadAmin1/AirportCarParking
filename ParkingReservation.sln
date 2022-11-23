@@ -14,6 +14,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkingReservation.Api", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingReservation.Api.Tests", "ParkingReservation.Api.Tests\ParkingReservation.Api.Tests.csproj", "{86778F03-1273-44D2-A3C2-7C120A0ED07F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingReservation.Core", "ParkingReservation.Core\ParkingReservation.Core.csproj", "{F5B37D2F-1F85-45BD-B955-C4E3735E3E3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingReservation.Core.Tests", "ParkingReservation.Core.Tests\ParkingReservation.Core.Tests.csproj", "{9CB027DB-F97A-4DFA-8C2D-5918AD44F264}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +32,14 @@ Global
 		{86778F03-1273-44D2-A3C2-7C120A0ED07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86778F03-1273-44D2-A3C2-7C120A0ED07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86778F03-1273-44D2-A3C2-7C120A0ED07F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5B37D2F-1F85-45BD-B955-C4E3735E3E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5B37D2F-1F85-45BD-B955-C4E3735E3E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5B37D2F-1F85-45BD-B955-C4E3735E3E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5B37D2F-1F85-45BD-B955-C4E3735E3E3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CB027DB-F97A-4DFA-8C2D-5918AD44F264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CB027DB-F97A-4DFA-8C2D-5918AD44F264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CB027DB-F97A-4DFA-8C2D-5918AD44F264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CB027DB-F97A-4DFA-8C2D-5918AD44F264}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,9 +11,9 @@ namespace ParkingReservation.Core
             _totalCapacity = totalCapacity;
         }
 
-        public int GetAvailability(DateRange _)
+        public async Task<int> GetAvailability(DateRange _)
         {
-            return _totalCapacity;
+            return await Task.FromResult(_totalCapacity);
         }
     }
 }

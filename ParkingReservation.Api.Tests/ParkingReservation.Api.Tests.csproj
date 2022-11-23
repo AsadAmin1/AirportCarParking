@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ParkingReservation.Api\ParkingReservation.Api.csproj" />
+    <ProjectReference Include="..\ParkingReservation.Core\ParkingReservation.Core.csproj" />
   </ItemGroup>
 
 </Project>

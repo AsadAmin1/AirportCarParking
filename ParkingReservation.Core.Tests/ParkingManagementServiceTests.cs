@@ -1,22 +1,20 @@
 using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
-using ParkingReservation.Core.Models;
 using ParkingReservation.Core.TestHelpers;
 
 namespace ParkingReservation.Core.Tests
 {
-    public class AvailabilityServiceTests
+    public class ParkingManagementServiceTests
     {
-        private readonly int totalCapacity = 10;
-        private AvailabilityService availabilityService;
-        private List<IBookable> bookableItems;
+        private IAvailabilityService _availabilityService;
+        private IBookingService _bookingService;
+        private readonly List<IBookable> _bookableItems = TestBookableItems.Items;
 
         [SetUp]
         public void SetUp()
         {
-            availabilityService = new AvailabilityService();
-            bookableItems = new List<IBookable>();
-            PopulateBookableItemsList(1, 10);
+            _availabilityService = new AvailabilityService();
+            _bookingService = new BookingService(TestBookableItems.Items);
         }
 
         [Test]
@@ -24,10 +22,10 @@ namespace ParkingReservation.Core.Tests
         {
             var dateRange = TestBookingDates.Jan1To9_1300_1300;
 
-            var sut = new AvailabilityService();
-            var actual = await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation>());
+            var sut = new ParkingService(_availabilityService, _bookingService);
+            var actual = await sut.GetAvailabilityAsync(dateRange);
 
-            Assert.That(actual.Spaces, Is.EqualTo(totalCapacity));
+            Assert.That(actual.Spaces, Is.EqualTo(_bookableItems.Count));
         }
 
         [Test]
@@ -36,10 +34,10 @@ namespace ParkingReservation.Core.Tests
             var expected = "Start Date can not be in the past.";
             
             var dateRange = TestBookingDates.ElapsedDate;
-            var sut = new AvailabilityService();
+            var sut = new ParkingService(_availabilityService, _bookingService);
             var ex = Assert.ThrowsAsync<ElapsedDateException>(async () =>
             {
-                await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation>());
+                await sut.GetAvailabilityAsync(dateRange);
             });
 
             Assert.That(ex.Message, Is.EqualTo(expected));
@@ -51,10 +49,10 @@ namespace ParkingReservation.Core.Tests
             var expected = "Start Date must be after than the End Date.";
 
             var dateRange = TestBookingDates.InvalidDates;
-            var sut = new AvailabilityService();
+            var sut = new ParkingService(_availabilityService, _bookingService);
             var ex = Assert.ThrowsAsync<InvalidDatesException>(async () =>
             {
-                await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation>());
+                await sut.GetAvailabilityAsync(dateRange);
             });
 
             Assert.That(ex.Message, Is.EqualTo(expected));
@@ -63,11 +61,13 @@ namespace ParkingReservation.Core.Tests
         [Test]
         public async Task GetAvailability_WithExistingMatchingBooking_Returns9Spaces()
         {
-            var expected = totalCapacity - 1;
+            var expected = _bookableItems.Count - 1;
 
             var dateRange = TestBookingDates.Jan1To9_1300_1300;
-            var sut = new AvailabilityService();
-            var actual = await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation> { new(dateRange, new CarParkingSpot("1")) });
+            var sut = new ParkingService(_availabilityService, _bookingService);
+            await sut.AddReservationAsync(dateRange);
+
+            var actual = await sut.GetAvailabilityAsync(dateRange);
 
             Assert.That(actual.Spaces, Is.EqualTo(expected));
         }
@@ -75,21 +75,16 @@ namespace ParkingReservation.Core.Tests
         [Test]
         public async Task GetAvailability_WithExistingNotMatchingBooking_Returns10Spaces()
         {
-            var expected = totalCapacity;
+            var expected = _bookableItems.Count;
 
             var firstWeek = TestBookingDates.Jan1To9_1300_1300;
+            var sut = new ParkingService(_availabilityService, _bookingService);
+            await sut.AddReservationAsync(firstWeek);
+
             var secondWeek = TestBookingDates.Jan10To19_1300_1300;
-            
-            var sut = new AvailabilityService();
-            var actual = await sut.GetAvailabilityAsync(secondWeek, 10, new List<Reservation> { new(firstWeek, new CarParkingSpot("1")) });
+            var actual = await sut.GetAvailabilityAsync(secondWeek);
 
             Assert.That(expected, Is.EqualTo(actual.Spaces));
-        }
-
-        private void PopulateBookableItemsList(int start, int end)
-        {
-            Enumerable.Range(start, end).ToList()
-                .ForEach(i => bookableItems.Add(new CarParkingSpot(i.ToString())));
         }
     }
 }

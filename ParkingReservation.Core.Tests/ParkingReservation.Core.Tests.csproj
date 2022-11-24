@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ParkingReservation.Core.TestHelpers\ParkingReservation.Core.TestHelpers.csproj" />
     <ProjectReference Include="..\ParkingReservation.Core\ParkingReservation.Core.csproj" />
   </ItemGroup>
 

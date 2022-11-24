@@ -5,29 +5,28 @@ using ParkingReservation.Core.TestHelpers;
 
 namespace ParkingReservation.Core.Tests
 {
-    public class AvailabilityServiceTests
+    public class BookingServiceTests
     {
         private readonly int totalCapacity = 10;
-        private AvailabilityService availabilityService;
-        private List<IBookable> bookableItems;
-
-        [SetUp]
-        public void SetUp()
-        {
-            availabilityService = new AvailabilityService();
-            bookableItems = new List<IBookable>();
-            PopulateBookableItemsList(1, 10);
-        }
+        private readonly List<IBookable> bookableItems = TestBookableItems.Items;
 
         [Test]
-        public async Task GetAvailability_WithNoBookings_Returns10Spaces()
+        public async Task AddReservation_WithAvailableDates_ReturnsReservation()
         {
             var dateRange = TestBookingDates.Jan1To9_1300_1300;
+            var expected = 1;
 
-            var sut = new AvailabilityService();
-            var actual = await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation>());
+            var sut = new BookingService(bookableItems);
+            var actual = await sut.AddReservationAsync(dateRange);
 
-            Assert.That(actual.Spaces, Is.EqualTo(totalCapacity));
+            Assert.Multiple(() =>
+            {
+                Assert.That(sut.Reservations.Count, Is.EqualTo(expected));
+                Assert.That(actual.DateRange.StartTime, Is.EqualTo(dateRange.StartTime));
+                Assert.That(actual.DateRange.EndTime, Is.EqualTo(dateRange.EndTime));
+                Assert.That(actual.Reference, !Is.EqualTo(String.Empty));
+                Assert.That(actual.Item, !Is.Null);
+            });
         }
 
         [Test]
@@ -84,12 +83,6 @@ namespace ParkingReservation.Core.Tests
             var actual = await sut.GetAvailabilityAsync(secondWeek, 10, new List<Reservation> { new(firstWeek, new CarParkingSpot("1")) });
 
             Assert.That(expected, Is.EqualTo(actual.Spaces));
-        }
-
-        private void PopulateBookableItemsList(int start, int end)
-        {
-            Enumerable.Range(start, end).ToList()
-                .ForEach(i => bookableItems.Add(new CarParkingSpot(i.ToString())));
         }
     }
 }

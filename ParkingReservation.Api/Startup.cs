@@ -5,14 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ParkingReservation.Core;
 using ParkingReservation.Core.Interfaces;
+using ParkingReservation.Core.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ParkingReservation.Api
 {
     public class Startup       
     {
-        // Read from config
-        private const int totalCapacity = 10;
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,7 +27,13 @@ namespace ParkingReservation.Api
             services.AddVersioning();
             services.AddSwaggerGen();
 
-            services.AddSingleton<IAvailabilityService>((services) => new AvailabilityService(totalCapacity));
+            services.AddTransient<IAvailabilityService>((services) => new AvailabilityService());
+            services.AddSingleton<IBookingService>((services) => new BookingService(BookableItems.Items));
+            services.AddSingleton<IParkingService>((services) => new ParkingService(
+                services.GetRequiredService<IAvailabilityService>(),
+                services.GetRequiredService<IBookingService>()
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +59,13 @@ namespace ParkingReservation.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        public class BookableItems
+        {
+            public static readonly List<IBookable> Items = new (
+                Enumerable.Range(1, 10).ToList().Select(i => new CarParkingSpot(i.ToString())).ToList()
+               );
         }
     }
 }

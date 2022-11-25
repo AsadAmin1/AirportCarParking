@@ -32,7 +32,7 @@ namespace ParkingReservation.Core
 
         #region Public Methods
 
-        public async Task<Reservation> AddReservationAsync(DateRange dateRange)
+        public async Task<Reservation> AddReservationAsync(DateRange dateRange, decimal price)
         {
             var bookingsInDateRange = Reservations
                             .Where(b => b.DateRange.Overlaps(dateRange))
@@ -47,7 +47,7 @@ namespace ParkingReservation.Core
             var item = _bookableItems.Except(bookingsInDateRange).First();
             
             var reference = Guid.NewGuid().ToString();
-            var res = new Reservation(dateRange, item);
+            var res = new Reservation(dateRange, item, price);
             _reservations.Add(reference, res);
 
             return await Task.FromResult(res);

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using ParkingReservation.Core;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Tests.PriceRules;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,11 +28,19 @@ namespace ParkingReservation.Api
             services.AddVersioning();
             services.AddSwaggerGen();
 
+            var priceRules = new List<IPriceRule>()
+            {
+                new SummerPriceRule(),
+                new WinterPriceRule()
+            };
+
             services.AddTransient<IAvailabilityService>((services) => new AvailabilityService());
             services.AddSingleton<IBookingService>((services) => new BookingService(BookableItems.Items));
+            services.AddSingleton<IPricingService>((services) => new PricingService(priceRules));
             services.AddSingleton<IParkingService>((services) => new ParkingService(
                 services.GetRequiredService<IAvailabilityService>(),
-                services.GetRequiredService<IBookingService>()
+                services.GetRequiredService<IBookingService>(),
+                services.GetRequiredService<IPricingService>()
                 )
             );
         }

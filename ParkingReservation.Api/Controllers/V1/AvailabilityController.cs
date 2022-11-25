@@ -21,7 +21,7 @@ namespace ParkingReservation.Api.v1.Controllers
         private readonly ILogger<AvailabilityController> _logger;
         private readonly IParkingService _parkingService;
 
-        #region
+        #endregion
 
         #region Constructors
 
@@ -33,7 +33,7 @@ namespace ParkingReservation.Api.v1.Controllers
 
         #endregion
 
-        #endregion Public Methods
+        #region Public Methods
 
         [HttpGet]
         public async Task<IActionResult> GetAvailability([FromQuery]DateRange dateRange)
@@ -42,6 +42,7 @@ namespace ParkingReservation.Api.v1.Controllers
             try
             {
                 var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
+
                 return Ok(availability.AsAvailabilityResponse());
             }catch(Exception ex) {
                 if (ex is ElapsedDateException || ex is InvalidDatesException)
@@ -59,15 +60,12 @@ namespace ParkingReservation.Api.v1.Controllers
             var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
             try
             {
-                var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
-                if (availability.Spaces > 0)
+                var reservation = await _parkingService.AddReservationAsync(domainDateRange);
+                if (reservation != null)
                 {
-                    var reservation = await _parkingService.AddReservationAsync(domainDateRange);
-                    if (reservation != null)
-                    {
-                        return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", reservation.MapToReservationResponse());
-                    }
+                    return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", reservation.MapToReservationResponse());
                 }
+
                 return new StatusCodeResult(StatusCodes.Status424FailedDependency);
             }
             catch (Exception ex)

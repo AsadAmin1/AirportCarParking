@@ -6,6 +6,6 @@ namespace ParkingReservation.Core.Interfaces
     {
         int TotalCapacity { get; }
         List<Reservation> Reservations { get; }
-        Task<Reservation> AddReservationAsync(DateRange dateRange);
+        Task<Reservation> AddReservationAsync(DateRange dateRange, decimal price);
     }
 }

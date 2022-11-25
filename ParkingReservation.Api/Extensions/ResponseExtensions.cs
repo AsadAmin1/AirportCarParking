@@ -8,8 +8,9 @@ namespace ParkingReservation.Api.Extensions
     {
         public static AvailabilityResponse AsAvailabilityResponse(this Availability availability, ErrorDetails error = null)
         {
-            return new AvailabilityResponse{
+            return new AvailabilityResponse {
                 Spaces = availability.Spaces,
+                Price = availability.Price,
                 Error = error,
             };
         }
@@ -27,8 +28,9 @@ namespace ParkingReservation.Api.Extensions
         {
             return new ReservationResponse
             {
-                DateRange = new ApiModels.DateRange{ StartTime = reservation.DateRange.StartTime, EndTime = reservation.DateRange.EndTime},
+                DateRange = new ApiModels.DateRange { StartTime = reservation.DateRange.StartTime, EndTime = reservation.DateRange.EndTime },
                 Reference = reservation.Reference,
+                Price = reservation.Price,
                 Item = reservation.Item,
                 Error = error,
             };

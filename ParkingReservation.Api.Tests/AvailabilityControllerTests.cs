@@ -24,15 +24,17 @@ namespace ParkingReservation.Api.Tests
             _mockLogger = Mock.Of<ILogger<AvailabilityController>>();
             var availabilityService = new AvailabilityService();
             var bookingService = new BookingService(TestBookableItems.Items);
-            _parkingService = new ParkingService(availabilityService, bookingService);
+            var pricingService = new PricingService(TestPricingRules.PriceRules);
+            _parkingService = new ParkingService(availabilityService, bookingService, pricingService);
         }
 
         [Test]
         public async Task GetAvailability_WithNoBookings_Returns10Spaces()
         {
-            var dateRange = TestBookingDates.Jan1To9_1300_1300;
+            var dateRange = TestBookingDates.Jan1To8_1300_1300;
             
             var expected = totalCapacity;
+            var expectedPrice = 168m;
 
             var domainDateRange = dateRange.MapToDateRange();
             var controller = new AvailabilityController(_mockLogger, _parkingService);
@@ -48,6 +50,7 @@ namespace ParkingReservation.Api.Tests
                     Assert.That(contentResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
                     var content = contentResult.Value as AvailabilityResponse;
                     Assert.That(content?.Spaces, Is.EqualTo(expected));
+                    Assert.That(content?.Price, Is.EqualTo(expectedPrice));
                 }
             });
         }

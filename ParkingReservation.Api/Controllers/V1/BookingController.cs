@@ -6,6 +6,7 @@ using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
+using ParkingReservation.Api.Extensions;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -17,15 +18,15 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Private Fields
 
         private readonly ILogger<BookingController> _logger;
-        private readonly IBookingService _bookingService;
+        private readonly IParkingService _parkingService;
 
         #region
 
         #region Constructors
 
-        public BookingController(ILogger<BookingController> logger, IBookingService bookingService) { 
+        public BookingController(ILogger<BookingController> logger, IParkingService parkingService) { 
             _logger = logger;
-            _bookingService = bookingService;
+            _parkingService = parkingService;
         }
 
         #endregion
@@ -38,20 +39,11 @@ namespace ParkingReservation.Api.v1.Controllers
             var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
 
             try { 
-                var reservation = await _bookingService.AddReservationAsync(domainDateRange);
-                if (reservation != null)
+                var reservationResult = await _parkingService.AddReservationAsync(domainDateRange);
+                if (reservationResult != null)
                 {
-                    var apiRes = new ReservationResponse
-                    {
-                        DateRange = new DateRange{
-                            StartTime = reservation.DateRange.StartTime,
-                            EndTime = reservation.DateRange.EndTime
-                        },
-                        Reference = reservation.Reference,
-                        Item = reservation.Item
-                    };
-
-                    return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", apiRes);
+                    var reservation = reservationResult.MapToReservationResponse();
+                    return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", reservation);
                 }
 
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);

@@ -8,6 +8,7 @@ namespace ParkingReservation.Api.ApiModels
         #region Public Properties
 
         public DateRange DateRange { get; set; }
+        public decimal Price { get; set; }
         public ErrorDetails Error { get; set; }
         public string Reference { get; internal set; }
         public IBookable Item { get; internal set; }

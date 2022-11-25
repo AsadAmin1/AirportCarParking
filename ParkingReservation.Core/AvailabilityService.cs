@@ -8,7 +8,7 @@ namespace ParkingReservation.Core
     {
         #region Public Methods
 
-        public async Task<Availability> GetAvailabilityAsync(DateRange dateRange, int totalCapacity, List<Reservation> reservations)
+        public async Task<int> GetAvailabilityAsync(DateRange dateRange, int totalCapacity, List<Reservation> reservations)
         {
             if (dateRange.HasElapsed)
             {
@@ -24,7 +24,7 @@ namespace ParkingReservation.Core
 
             var availableSpaces = totalCapacity - spacesTaken;
 
-            return await Task.FromResult(new Availability(availableSpaces));
+            return await Task.FromResult(availableSpaces);
         }
 
         #endregion

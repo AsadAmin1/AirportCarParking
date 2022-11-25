@@ -47,10 +47,20 @@ namespace ParkingReservation.Core
             var item = _bookableItems.Except(bookingsInDateRange).First();
             
             var reference = Guid.NewGuid().ToString();
-            var res = new Reservation(dateRange, item, price);
+            var res = new Reservation(dateRange, item, reference, price);
             _reservations.Add(reference, res);
 
             return await Task.FromResult(res);
+        }
+
+        public async Task<bool> CancelReservationAsync(string reference)
+        {
+            if (_reservations.ContainsKey(reference))
+            {
+                return await Task.FromResult(_reservations.Remove(reference));
+            }
+
+            throw new BookingNotFoundException("Booking not found.");
         }
 
         #endregion

@@ -16,9 +16,9 @@ namespace ParkingReservation.Core.Models
 
         #region Constructors
 
-        public Reservation(DateRange dateRange, IBookable item, decimal price = 0)
+        public Reservation(DateRange dateRange, IBookable item, string reference = "", decimal price = 0)
         {
-            Reference = Guid.NewGuid().ToString();
+            Reference = reference;
             DateRange = dateRange;
             Price = price;
             Item = item;

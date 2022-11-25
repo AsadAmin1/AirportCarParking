@@ -28,6 +28,7 @@ namespace ParkingReservation.Core
 
             return new Availability(spaces, price);
         }
+
         public async Task<Reservation> AddReservationAsync(DateRange dateRange)
         {
             var totalCapacity = _bookingService.TotalCapacity;
@@ -46,6 +47,11 @@ namespace ParkingReservation.Core
                 }
             }
             throw new NoAvailabilityException("Unfortunately there is no availability for the request date range.");
+        }
+
+        public async Task<bool> CancelReservationAsync(string bookingReference)
+        {
+            return await _bookingService.CancelReservationAsync(bookingReference);
         }
     }
 }

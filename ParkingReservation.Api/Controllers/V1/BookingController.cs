@@ -58,6 +58,25 @@ namespace ParkingReservation.Api.v1.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CancelReservationAsync([FromBody] string bookingReference)
+        {
+            try
+            {
+                await _parkingService.CancelReservationAsync(bookingReference);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                if (ex is BookingNotFoundException)
+                {
+                    return new NotFoundObjectResult(ex.Message);
+                }
+
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         #endregion
     }
 }

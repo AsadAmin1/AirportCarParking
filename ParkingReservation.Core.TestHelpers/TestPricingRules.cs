@@ -7,7 +7,7 @@ namespace ParkingReservation.Core.TestHelpers
     {
         public static List<IPriceRule> PriceRules
         {
-            get => new List<IPriceRule>()
+            get => new()
             {
                 new SummerPriceRule(),
                 new WinterPriceRule()

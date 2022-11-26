@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using ParkingReservation.Core;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.Models;
 using ParkingReservation.Core.Tests.PriceRules;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace ParkingReservation.Api
 {
@@ -24,7 +26,11 @@ namespace ParkingReservation.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                    .AddJsonOptions(options => 
+                        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    );
+
             services.AddVersioning();
             services.AddSwaggerGen();
 

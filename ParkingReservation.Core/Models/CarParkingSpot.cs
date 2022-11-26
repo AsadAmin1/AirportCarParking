@@ -8,7 +8,9 @@ namespace ParkingReservation.Core.Models
         
         public string ItemReference { get; }
 
-        #endregion 
+        public string ItemType { get => GetType().Name; }
+
+        #endregion
 
         #region Constructors
 

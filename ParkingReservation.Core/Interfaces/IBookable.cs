@@ -3,5 +3,6 @@
     public interface IBookable
     {
         string ItemReference { get; }
+        string ItemType { get; }
     }
 }

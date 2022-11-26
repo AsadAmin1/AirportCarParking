@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "c4347140-9772-4d07-b21c-bd00489c90c2",
+		"name": "Airport Car Parking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2339631"
+	},
+	"item": [
+		{
+			"name": "Create Booking",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "startTime",
+						"value": "01/01/2022 00:00:00",
+						"type": "text"
+					},
+					{
+						"key": "endTime",
+						"value": "02/01/2022 00:00:00",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"startTime\": \"2023-01-01T00:00:00\",\r\n    \"endTime\"  : \"2023-01-02T00:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:10330/api/v1/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10330",
+					"path": [
+						"api",
+						"v1",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Availability",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "startTime",
+						"value": "01/01/2022 00:00:00",
+						"type": "text"
+					},
+					{
+						"key": "endTime",
+						"value": "02/01/2022 00:00:00",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:10330/api/v1/availability?startTime=2023-01-01T00:00:00&endTime=2023-01-02T00:00:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10330",
+					"path": [
+						"api",
+						"v1",
+						"availability"
+					],
+					"query": [
+						{
+							"key": "startTime",
+							"value": "2023-01-01T00:00:00"
+						},
+						{
+							"key": "endTime",
+							"value": "2023-01-02T00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Booking",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "startTime",
+						"value": "01/01/2022 00:00:00",
+						"type": "text"
+					},
+					{
+						"key": "endTime",
+						"value": "02/01/2022 00:00:00",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookingReference\": \"7ac84b55-d47b-4e5b-b33b-299755ed1ae1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:10330/api/v1/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10330",
+					"path": [
+						"api",
+						"v1",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Amend Booking",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "startTime",
+						"value": "01/01/2022 00:00:00",
+						"type": "text"
+					},
+					{
+						"key": "endTime",
+						"value": "02/01/2022 00:00:00",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookingReference\": \"7ac84b55-d47b-4e5b-b33b-299755ed1ae1\",\r\n    \"dateRange\": {\r\n        \"startTime\": \"2023-01-02T00:00:00\",\r\n        \"endTime\"  : \"2023-01-03T00:00:00\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:10330/api/v1/booking",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10330",
+					"path": [
+						"api",
+						"v1",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

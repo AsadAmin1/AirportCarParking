@@ -8,6 +8,7 @@ using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
+using System.Reflection;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -20,6 +21,7 @@ namespace ParkingReservation.Api.v1.Controllers
 
         private readonly ILogger<AvailabilityController> _logger;
         private readonly IParkingService _parkingService;
+        private readonly string _messageFormat = "{0}-{1}";
 
         #endregion
 
@@ -36,52 +38,25 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Public Methods
 
         [HttpGet]
-        public async Task<IActionResult> GetAvailability([FromQuery]DateRange dateRange)
+        public async Task<IActionResult> GetAvailabilityAsync([FromQuery]DateRange dateRange)
         {
-            using (_logger.BeginScope($"{0}", System.Reflection.MethodBase.GetCurrentMethod().Name))
+            using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
             {
-                _logger.LogInformation("fl;ksd;fk");
                 var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
                 try
                 {
                     var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
-
                     return Ok(availability.AsAvailabilityResponse());
                 }
                 catch (Exception ex)
                 {
-                    if (ex is ElapsedDateException || ex is InvalidDatesException)
+                    if (ex is ElapsedDateException || ex is InvalidDatesException || ex is NoAvailabilityException)
                     {
-                        return BadRequest(new AvailabilityResponse { Error = new ErrorDetails(ex.Message) });
+                        return BadRequest(new AvailabilityResponse { Error = ErrorDetails.New(ex.Message) });
                     }
 
                     return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 }
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateReservation([FromBody] DateRange dateRange)
-        {
-            var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
-            try
-            {
-                var reservation = await _parkingService.AddReservationAsync(domainDateRange);
-                if (reservation != null)
-                {
-                    return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", reservation.MapToReservationResponse());
-                }
-
-                return new StatusCodeResult(StatusCodes.Status424FailedDependency);
-            }
-            catch (Exception ex)
-            {
-                if (ex is ElapsedDateException || ex is InvalidDatesException)
-                {
-                    return BadRequest(new AvailabilityResponse { Error = new ErrorDetails(ex.Message) });
-                }
-
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 

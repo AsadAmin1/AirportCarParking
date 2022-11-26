@@ -9,19 +9,14 @@ namespace ParkingReservation.Api.ApiModels
         #region Public Properties
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public int? Code { get; }
-        public string Description { get; }
+        public int? Code { get; set; }
+        public string Description { get; set;  }
 
         #endregion
 
-        #region Constructors
-
-        public ErrorDetails(string description, int? code = null)
+        public static ErrorDetails New(string description, int? code = null)
         {
-            Description = description;
-            Code = code;
+            return new ErrorDetails { Code = code, Description = description };
         }
-
-        #endregion
     }
 }

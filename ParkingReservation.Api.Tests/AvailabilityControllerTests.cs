@@ -31,51 +31,114 @@ namespace ParkingReservation.Api.Tests
         [Test]
         public async Task GetAvailability_WithNoBookings_Returns10Spaces()
         {
-            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
-            
             var expected = totalCapacity;
             var expectedPrice = 168m;
 
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+
             var domainDateRange = dateRange.MapToDateRange();
             var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailability(domainDateRange);
+            var actionResult = await controller.GetAvailabilityAsync(domainDateRange);
 
             var contentResult = actionResult as OkObjectResult;
+            var availabilityResponse = contentResult?.Value as AvailabilityResponse;
 
             Assert.Multiple(() =>
             {
-                Assert.That(contentResult, !Is.Null);
-                if (contentResult != null)
-                {
-                    Assert.That(contentResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-                    var content = contentResult.Value as AvailabilityResponse;
-                    Assert.That(content?.Spaces, Is.EqualTo(expected));
-                    Assert.That(content?.Price, Is.EqualTo(expectedPrice));
-                }
+                Assert.That(contentResult?.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+                Assert.That(availabilityResponse?.Spaces, Is.EqualTo(expected));
+                Assert.That(availabilityResponse?.Price, Is.EqualTo(expectedPrice));
+            });
+        }
+
+        [Test]
+        public async Task GetAvailability_WithElapsedDate_ThrowsElapsedDateException()
+        {
+            var expectedMessage = "Start Date can not be in the past.";
+            var expectedStatus = StatusCodes.Status400BadRequest;
+
+            var dateRange = TestBookingDates.ElapsedDate;
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService);
+            var actionResult = await controller.GetAvailabilityAsync(dateRange.MapToDateRange());
+
+            var contentResult = actionResult as BadRequestObjectResult;
+            var availabilityResponse = contentResult?.Value as AvailabilityResponse;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(contentResult?.StatusCode, Is.EqualTo(expectedStatus));
+                Assert.That(availabilityResponse?.Error?.Description, Is.EqualTo(expectedMessage));
             });
         }
 
         [Test]
         public async Task GetAvailability_WithInvalidDates_ThrowsInvalidDatesException()
         {
-            var dateRange = TestBookingDates.InvalidDates;
-
             var expected = "Start Date must be after than the End Date.";
             var expectedStatusCode = StatusCodes.Status400BadRequest;
+            
+            var dateRange = TestBookingDates.InvalidDates;
 
             var domainDateRange = dateRange.MapToDateRange();
             var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailability(domainDateRange);
+            var actionResult = await controller.GetAvailabilityAsync(domainDateRange);
 
             var contentResult = actionResult as BadRequestObjectResult;
+            var availabilityResponse = contentResult?.Value as AvailabilityResponse;
 
             Assert.Multiple(() =>
             {
-                Assert.That(contentResult, !Is.Null);
                 Assert.That(contentResult?.StatusCode, Is.EqualTo(expectedStatusCode));
+                Assert.That(availabilityResponse?.Error?.Description, Is.EqualTo(expected));
+            });
+        }
 
-                var content = contentResult?.Value as AvailabilityResponse;
-                Assert.That(content?.Error?.Description, Is.EqualTo(expected));
+        [Test]
+        public async Task GetAvailability_WithExistingMatchingBooking_Returns9Spaces()
+        {
+            var expectedSpaces = 9;
+            var expectedStatus = StatusCodes.Status200OK;
+            var expectedDateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+
+            await _parkingService.AddReservationAsync(dateRange);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService);
+            var actionResults = await controller.GetAvailabilityAsync(dateRange.MapToDateRange());
+
+            var contentResult = actionResults as OkObjectResult;
+            var availabilityResponse = contentResult?.Value as AvailabilityResponse;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(contentResult?.StatusCode, Is.EqualTo(expectedStatus));
+                Assert.That(availabilityResponse?.Spaces, Is.EqualTo(expectedSpaces));
+            });
+        }
+
+        [Test]
+        public async Task GetAvailability_WithExistingNotMatchingBooking_Returns10Spaces()
+        {
+            var expected = 10;
+            var expectedStatusCode = StatusCodes.Status200OK;
+
+            var firstWeek = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var secondWeek = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
+
+            await _parkingService.AddReservationAsync(firstWeek);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService);
+            var actionResult = await controller.GetAvailabilityAsync(secondWeek.MapToDateRange());
+
+            var contentResult = actionResult as OkObjectResult;
+            var availabilityResponse = contentResult?.Value as AvailabilityResponse;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(contentResult?.StatusCode, Is.EqualTo(expectedStatusCode));
+                Assert.That(availabilityResponse?.Spaces, Is.EqualTo(expected));
             });
         }
     }

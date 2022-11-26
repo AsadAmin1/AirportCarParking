@@ -14,5 +14,10 @@ namespace ParkingReservation.Api.ApiModels
         public IBookable Item { get; internal set; }
 
         #endregion
+
+        public static ReservationResponse GetReservationResponse(ErrorDetails error)
+        {
+            return new ReservationResponse { Error = error };
+        }
     }
 }

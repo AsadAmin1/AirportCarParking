@@ -14,7 +14,7 @@ namespace ParkingReservation.Core.Tests.PriceRules
 
         public virtual decimal ApplyRule(DateRange dateRange)
         {
-            return (decimal)(dateRange.EndTime - dateRange.StartTime).TotalHours * PricePerHour;
+            return Math.Round((decimal)(dateRange.EndTime - dateRange.StartTime).TotalHours * PricePerHour, 2, MidpointRounding.AwayFromZero);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace ParkingReservation.Core.Tests
         {
             var expectedPrice = 168m;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             var actual = await sut.GetAvailabilityAsync(dateRange);
@@ -38,7 +38,7 @@ namespace ParkingReservation.Core.Tests
         {
             var expectedPrice = 336m;
 
-            var dateRange = TestBookingDates.Jun1To8_1300_1300;
+            var dateRange = TestBookingDates.SummerDates.FirstWeek1PMtoPM;
 
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             var actual = await sut.GetAvailabilityAsync(dateRange);
@@ -82,7 +82,7 @@ namespace ParkingReservation.Core.Tests
         {
             var expected = _bookableItems.Count - 1;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             await sut.AddReservationAsync(dateRange);
 
@@ -96,11 +96,11 @@ namespace ParkingReservation.Core.Tests
         {
             var expected = _bookableItems.Count;
 
-            var firstWeek = TestBookingDates.Jan1To8_1300_1300;
+            var firstWeek = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             await sut.AddReservationAsync(firstWeek);
 
-            var secondWeek = TestBookingDates.Jan9To16_1300_1300;
+            var secondWeek = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
             var actual = await sut.GetAvailabilityAsync(secondWeek);
 
             Assert.That(expected, Is.EqualTo(actual.Spaces));

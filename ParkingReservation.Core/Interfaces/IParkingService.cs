@@ -9,5 +9,7 @@ namespace ParkingReservation.Core.Interfaces
         Task<Availability> GetAvailabilityAsync(DateRange dateRange);
 
         Task<bool> CancelReservationAsync(string bookingReference);
+
+        Task<Reservation> AmendReservationAsync(AmendReservationRequest amendReservationRequest);
     }
 }

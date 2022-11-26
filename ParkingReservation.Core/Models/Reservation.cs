@@ -8,9 +8,14 @@ namespace ParkingReservation.Core.Models
 
         public string Reference { get; }
 
-        public DateRange DateRange { get; }
-        public decimal Price { get; }
-        public IBookable Item { get ; }
+        private DateRange _dateRange;
+        public DateRange DateRange { get => _dateRange; }
+
+        private decimal _price;
+        public decimal Price { get => _price; }
+
+        private IBookable _item;
+        public IBookable Item { get => _item; }
 
         #endregion
 
@@ -18,10 +23,17 @@ namespace ParkingReservation.Core.Models
 
         public Reservation(DateRange dateRange, IBookable item, string reference = "", decimal price = 0)
         {
+            _dateRange = dateRange;
+            _price = price;
+            _item = item;
             Reference = reference;
-            DateRange = dateRange;
-            Price = price;
-            Item = item;
+        }
+
+        public void Amend(DateRange dateRange, IBookable item, decimal price)
+        {
+            _dateRange = dateRange;
+            _price = price;
+            _item = item;
         }
 
         #endregion

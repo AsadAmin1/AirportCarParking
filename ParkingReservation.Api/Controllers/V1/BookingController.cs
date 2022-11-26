@@ -58,8 +58,8 @@ namespace ParkingReservation.Api.v1.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CancelReservationAsync([FromBody] string bookingReference)
+        [HttpDelete]
+        public async Task<IActionResult> CancelReservationAsync([FromQuery] string bookingReference)
         {
             try
             {
@@ -75,6 +75,13 @@ namespace ParkingReservation.Api.v1.Controllers
 
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> AmendReservationAsync([FromBody] AmendReservationRequest amendReservationRequest)
+        {
+            var reservation = await _parkingService.AmendReservationAsync(amendReservationRequest.MapToDomainModel());
+            return Ok(reservation.MapToReservationResponse());
         }
 
         #endregion

@@ -38,19 +38,25 @@ namespace ParkingReservation.Api.v1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAvailability([FromQuery]DateRange dateRange)
         {
-            var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
-            try
+            using (_logger.BeginScope($"{0}", System.Reflection.MethodBase.GetCurrentMethod().Name))
             {
-                var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
-
-                return Ok(availability.AsAvailabilityResponse());
-            }catch(Exception ex) {
-                if (ex is ElapsedDateException || ex is InvalidDatesException)
+                _logger.LogInformation("fl;ksd;fk");
+                var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
+                try
                 {
-                    return BadRequest(new AvailabilityResponse { Error = new ErrorDetails(ex.Message) });
-                }
+                    var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
 
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                    return Ok(availability.AsAvailabilityResponse());
+                }
+                catch (Exception ex)
+                {
+                    if (ex is ElapsedDateException || ex is InvalidDatesException)
+                    {
+                        return BadRequest(new AvailabilityResponse { Error = new ErrorDetails(ex.Message) });
+                    }
+
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                }
             }
         }
 

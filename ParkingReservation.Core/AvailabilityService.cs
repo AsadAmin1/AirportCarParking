@@ -24,7 +24,12 @@ namespace ParkingReservation.Core
 
             var availableSpaces = totalCapacity - spacesTaken;
 
-            return await Task.FromResult(availableSpaces);
+            if (availableSpaces > 0)
+            {
+                return await Task.FromResult(availableSpaces);
+            }
+
+            throw new NoAvailabilityException("Unfortunately there is no availability for the request date range.");
         }
 
         #endregion

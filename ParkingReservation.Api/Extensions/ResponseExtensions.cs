@@ -44,5 +44,13 @@ namespace ParkingReservation.Api.Extensions
                 EndTime = dateRange.EndTime,
             };
         }
+
+        public static Core.Models.DateRange MapToDateRange(this ApiModels.DateRange dateRange)
+        {
+            return new Core.Models.DateRange(
+                dateRange.StartTime, 
+                dateRange.EndTime
+            );
+        }
     }
 }

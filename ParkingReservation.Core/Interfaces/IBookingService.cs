@@ -10,6 +10,10 @@ namespace ParkingReservation.Core.Interfaces
 
         Task<Reservation> AddReservationAsync(DateRange dateRange, decimal price);
 
-        Task<bool> CancelReservationAsync(string reference);
+        Task<bool> CancelReservationAsync(string bookingReference);
+
+        Task<Reservation> GetReservationAsync(string bookingReference);
+
+        Task<Reservation> AmendReservationAsync(string bookingReference, DateRange dateRange, decimal price);
     }
 }

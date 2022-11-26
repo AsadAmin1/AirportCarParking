@@ -16,7 +16,7 @@ namespace ParkingReservation.Core.Tests
         public void GetPrice_WithNoPricing_Returns0()
         {
             var expected = 0;
-            var dateRange = TestBookingDates.Jan8To15_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
 
             var pricing = new PricingService(new List<IPriceRule>());
             var actual = pricing.GetPrice(dateRange);
@@ -28,7 +28,7 @@ namespace ParkingReservation.Core.Tests
         public void GetPrice_WithWinterFor1Week_Returns168()
         {
             var expected = 168;
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var pricing = new PricingService(_priceRules);
             var actual = pricing.GetPrice(dateRange);
@@ -40,7 +40,7 @@ namespace ParkingReservation.Core.Tests
         public void GetPrice_WithSummerFor1Week_Returns168()
         {
             var expected = 336;
-            var dateRange = TestBookingDates.Jun1To8_1300_1300;
+            var dateRange = TestBookingDates.SummerDates.FirstWeek1PMtoPM;
 
             var pricing = new PricingService(_priceRules);
             var actual = pricing.GetPrice(dateRange);

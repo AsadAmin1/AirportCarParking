@@ -9,8 +9,8 @@ namespace ParkingReservation.Core.Tests.Models
         {
             var expected = false;
 
-            var dateRange1 = TestBookingDates.Jan1To8_1300_1300;
-            var dateRange2 = TestBookingDates.Jan9To16_1300_1300;
+            var dateRange1 = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var dateRange2 = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
 
             var actual = dateRange1.Overlaps(dateRange2);
 
@@ -22,8 +22,8 @@ namespace ParkingReservation.Core.Tests.Models
         {
             var expected = true;
 
-            var dateRange1 = TestBookingDates.Jan1To8_1300_1300;
-            var dateRange2 = TestBookingDates.Jan8To15_1300_1300;
+            var dateRange1 = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var dateRange2 = TestBookingDates.WinterDates.FirstWeekOverlap;
 
             var actual = dateRange1.Overlaps(dateRange2);
 

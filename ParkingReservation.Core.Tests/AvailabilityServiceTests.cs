@@ -20,7 +20,7 @@ namespace ParkingReservation.Core.Tests
         [Test]
         public async Task GetAvailability_WithNoBookings_Returns10Spaces()
         {
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new AvailabilityService();
             var actual = await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation>());
@@ -63,7 +63,7 @@ namespace ParkingReservation.Core.Tests
         {
             var expected = totalCapacity - 1;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
             var sut = new AvailabilityService();
             var actual = await sut.GetAvailabilityAsync(dateRange, 10, new List<Reservation> { new(dateRange, new CarParkingSpot("1")) });
 
@@ -75,8 +75,8 @@ namespace ParkingReservation.Core.Tests
         {
             var expected = totalCapacity;
 
-            var firstWeek = TestBookingDates.Jan1To8_1300_1300;
-            var secondWeek = TestBookingDates.Jan9To16_1300_1300;
+            var firstWeek = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var secondWeek = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
             
             var sut = new AvailabilityService();
             var actual = await sut.GetAvailabilityAsync(secondWeek, 10, new List<Reservation> { new(firstWeek, new CarParkingSpot("1")) });

@@ -31,7 +31,7 @@ namespace ParkingReservation.Api.Tests
         [Test]
         public async Task GetAvailability_WithNoBookings_Returns10Spaces()
         {
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
             
             var expected = totalCapacity;
             var expectedPrice = 168m;

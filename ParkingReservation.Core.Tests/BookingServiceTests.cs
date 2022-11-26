@@ -1,6 +1,7 @@
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.TestHelpers;
 using ParkingReservation.Core.Exceptions;
+using ParkingReservation.Core.Models;
 
 namespace ParkingReservation.Core.Tests
 {
@@ -14,7 +15,7 @@ namespace ParkingReservation.Core.Tests
             var expectedSpaces = 1;
             var expectedPrice = 168m;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
             var actual = await sut.AddReservationAsync(dateRange, expectedPrice);
@@ -37,7 +38,7 @@ namespace ParkingReservation.Core.Tests
             var expectedPrice = 1m;
             var expectedResponse = true;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
             var reservation = await sut.AddReservationAsync(dateRange, expectedPrice);
@@ -58,7 +59,7 @@ namespace ParkingReservation.Core.Tests
             var expectedPrice = 1m;
             var expectedResponse = false;
 
-            var dateRange = TestBookingDates.Jan1To8_1300_1300;
+            var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
             var reservation = await sut.AddReservationAsync(dateRange, expectedPrice);
@@ -75,6 +76,72 @@ namespace ParkingReservation.Core.Tests
                 Assert.That(sut.Reservations, Has.Count.EqualTo(expectedReservations));
                 Assert.That(actual, Is.EqualTo(expectedResponse));
             });
+        }
+
+        [Test]
+        public async Task AmendBooking_WithExistingBookingWithAvailableDates_ReturnsTrue()
+        {
+            var dateRange1 = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var dateRange2 = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
+
+            var initialDates = dateRange1;
+            var initialPrice = 150m;
+
+            var newDates = initialDates;
+            var newPrice = 200m;
+
+            var bookingService = new BookingService(bookableItems);
+            var reservation = await bookingService.AddReservationAsync(initialDates, initialPrice);
+            var initialBookingReference = reservation.Reference;
+
+            var amendedReservation = await bookingService.AmendReservationAsync(reservation.Reference, newDates, newPrice);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(reservation.Reference, Is.EqualTo(initialBookingReference));
+                Assert.That(amendedReservation.DateRange.StartTime, Is.EqualTo(newDates.StartTime));
+            });
+        }
+
+        [Test]
+        public async Task AmendBooking_WithExistingBookingNoAvailabiltity_ThrowsException()
+        {
+            var expectedMessage = "Unfortunately there is no availability for the request date range.";
+
+            var dateRange1 = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
+            var dateRange2 = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
+
+            var initialDates = dateRange1;
+            var initialPrice = 150m;
+
+            var newDates = initialDates;
+            var newPrice = 200m;
+
+            var bookingService = new BookingService(bookableItems);
+            var reservation = await bookingService.AddReservationAsync(initialDates, initialPrice);
+            var initialBookingReference = reservation.Reference;
+
+            await CreateMultipleReservations(initialDates, initialPrice, bookingService);
+
+            var ex = Assert.ThrowsAsync<NoAvailabilityException>(async () =>
+            {
+                await bookingService.AmendReservationAsync(reservation.Reference, newDates, newPrice);
+            });
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+            });
+        }
+
+        private async Task CreateMultipleReservations(DateRange initialDates, decimal price, BookingService bookingService)
+        {
+            var tasks = new List<Task>();
+            for (int i = 1; i < 10; i++)
+            {
+                tasks.Add(bookingService.AddReservationAsync(initialDates, price));
+            }
+            await Task.WhenAll(tasks);
         }
     }
 }

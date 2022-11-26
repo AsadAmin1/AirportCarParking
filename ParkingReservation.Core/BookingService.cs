@@ -34,6 +34,17 @@ namespace ParkingReservation.Core
 
         public async Task<Reservation> AddReservationAsync(DateRange dateRange, decimal price)
         {
+            IBookable item = GetBookableItem(dateRange);
+
+            var reference = Guid.NewGuid().ToString();
+            var res = new Reservation(dateRange, item, reference, price);
+            _reservations.Add(reference, res);
+
+            return await Task.FromResult(res);
+        }
+
+        private IBookable GetBookableItem(DateRange dateRange)
+        {
             var bookingsInDateRange = Reservations
                             .Where(b => b.DateRange.Overlaps(dateRange))
                             .Select(i => i.Item)
@@ -44,23 +55,33 @@ namespace ParkingReservation.Core
                 throw new NoAvailabilityException("Unfortunately there is no availability for the request date range.");
             }
 
-            var item = _bookableItems.Except(bookingsInDateRange).First();
-            
-            var reference = Guid.NewGuid().ToString();
-            var res = new Reservation(dateRange, item, reference, price);
-            _reservations.Add(reference, res);
-
-            return await Task.FromResult(res);
+            return _bookableItems.Except(bookingsInDateRange).First();
         }
 
-        public async Task<bool> CancelReservationAsync(string reference)
+        public async Task<bool> CancelReservationAsync(string bookingReference)
         {
-            if (_reservations.ContainsKey(reference))
+            var reservation = await GetReservationAsync(bookingReference);
+            return await Task.FromResult(_reservations.Remove(bookingReference));
+        }
+
+        public async Task<Reservation> GetReservationAsync(string bookingReference)
+        {
+            if (_reservations.ContainsKey(bookingReference))
             {
-                return await Task.FromResult(_reservations.Remove(reference));
+                return await Task.FromResult(_reservations[bookingReference]);
             }
 
             throw new BookingNotFoundException("Booking not found.");
+        }
+
+        public async Task<Reservation> AmendReservationAsync(string bookingReference, DateRange dateRange, decimal price)
+        {
+            var reservation = await GetReservationAsync(bookingReference);
+            IBookable item = GetBookableItem(dateRange);
+
+            reservation.Amend(dateRange, item, price);
+
+            return await Task.FromResult(reservation);
         }
 
         #endregion

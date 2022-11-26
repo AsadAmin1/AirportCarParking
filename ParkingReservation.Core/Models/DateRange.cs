@@ -27,6 +27,11 @@
         public bool Overlaps(DateRange dateRange)
             => StartTime < dateRange.EndTime && dateRange.StartTime < EndTime;
 
+        public DateRange AddDays(int days)
+        {
+            return new DateRange(StartTime.AddDays(days), EndTime.AddDays(days));
+        }
+
         #endregion
     }
 }

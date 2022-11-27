@@ -69,8 +69,8 @@ namespace ParkingReservation.Api.v1.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> CancelReservationAsync([FromQuery] string bookingReference)
+        [HttpDelete("{bookingReference}")]
+        public async Task<IActionResult> CancelReservationAsync(string bookingReference)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
             {

@@ -1,4 +1,4 @@
-﻿using ParkingReservation.Core.Models;
+﻿using ParkingReservation.Core.Models.DatePeriods;
 
 namespace ParkingReservation.Core.Extensions
 {

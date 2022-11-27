@@ -1,11 +1,13 @@
-﻿namespace ParkingReservation.Core.Models
+﻿using ParkingReservation.Core.Models.DatePeriods;
+
+namespace ParkingReservation.Core.Models
 {
-    public class AmendReservationRequest
+    public class AmendReservation
     {
         public string BookingReference { get; set; }
         public DateRange DateRange { get; set; }
 
-        public AmendReservationRequest(string bookingReference, DateRange dateRange)
+        public AmendReservation(string bookingReference, DateRange dateRange)
         {
             BookingReference = bookingReference;
             DateRange = dateRange;

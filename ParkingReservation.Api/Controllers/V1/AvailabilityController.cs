@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ParkingReservation.Api.Extensions;
 using ParkingReservation.Core;
+using CoreModels = ParkingReservation.Core.Models;
 using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
 using System.Reflection;
+using AutoMapper;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -21,16 +22,18 @@ namespace ParkingReservation.Api.v1.Controllers
 
         private readonly ILogger<AvailabilityController> _logger;
         private readonly IParkingService _parkingService;
+        private readonly IMapper _mapper;
         private readonly string _messageFormat = "{0}-{1}";
 
         #endregion
 
         #region Constructors
 
-        public AvailabilityController(ILogger<AvailabilityController> logger, IParkingService parkingService)
+        public AvailabilityController(ILogger<AvailabilityController> logger, IParkingService parkingService, IMapper autoMapper)
         {
             _logger = logger;
             _parkingService = parkingService;
+            _mapper = autoMapper;
         }
 
         #endregion
@@ -42,11 +45,14 @@ namespace ParkingReservation.Api.v1.Controllers
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
             {
-                var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
+                var domainDateRange = _mapper.Map<CoreModels.DatePeriods.DateRange>(dateRange);
                 try
                 {
                     var availability = await _parkingService.GetAvailabilityAsync(domainDateRange);
-                    return Ok(availability.AsAvailabilityResponse());
+
+                    var response = _mapper.Map<AvailabilityResponse>(availability);
+
+                    return Ok(response);
                 }
                 catch (Exception ex)
                 {

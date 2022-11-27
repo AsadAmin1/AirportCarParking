@@ -1,4 +1,4 @@
-﻿namespace ParkingReservation.Core.Models
+﻿namespace ParkingReservation.Core.Models.DatePeriods
 {
     public class WinterSeason : Season
     {

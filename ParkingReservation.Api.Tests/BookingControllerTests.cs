@@ -7,8 +7,10 @@ using ParkingReservation.Core;
 using ParkingReservation.Core.TestHelpers;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Api.ApiModels;
-using ParkingReservation.Api.Extensions;
 using ParkingReservation.Api.Models;
+using AutoMapper;
+using ParkingReservation.Api.Configuration;
+using CoreModels = ParkingReservation.Core.Models;
 
 namespace ParkingReservation.Api.Tests
 {
@@ -17,12 +19,14 @@ namespace ParkingReservation.Api.Tests
         private ILogger<BookingController> _mockLogger;
         private IParkingService _parkingService;
         private PricingConfig _pricingConfig;
+        private IMapper _mapper;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             TestConfiguration.Setup();
             _pricingConfig = new PricingConfig(TestConfiguration.Get);
+            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
         }
 
         [SetUp]
@@ -43,9 +47,10 @@ namespace ParkingReservation.Api.Tests
 ;
             var expectedStatusCode = StatusCodes.Status201Created;
 
-            var domainDateRange = dateRange.MapToDateRange();
-            var controller = new BookingController(_mockLogger, _parkingService);
-            var actionResult = await controller.CreateReservationAsync(domainDateRange);
+            var request = _mapper.Map<DateRange>(dateRange);
+
+            var controller = new BookingController(_mockLogger, _parkingService, _mapper);
+            var actionResult = await controller.CreateReservationAsync(request);
 
             var contentResult = actionResult as CreatedResult;
             var reservationResponse = contentResult?.Value as ReservationResponse;
@@ -66,7 +71,7 @@ namespace ParkingReservation.Api.Tests
 
             var reservationResponse = await _parkingService.AddReservationAsync(dateRange);
 
-            var controller = new BookingController(_mockLogger, _parkingService);
+            var controller = new BookingController(_mockLogger, _parkingService, _mapper);
             var actionResult = await controller.CancelReservationAsync(reservationResponse.Reference);
 
             var contentResult = actionResult as OkResult;
@@ -81,7 +86,7 @@ namespace ParkingReservation.Api.Tests
 
             var bookingReference = "abc";
 
-            var controller = new BookingController(_mockLogger, _parkingService);
+            var controller = new BookingController(_mockLogger, _parkingService, _mapper);
             var actionResult = await controller.CancelReservationAsync(bookingReference);
 
             var cancelContentResult = actionResult as NotFoundObjectResult;
@@ -97,7 +102,7 @@ namespace ParkingReservation.Api.Tests
             var dateRange2 = TestBookingDates.WinterDates.SecondWeek1PMto1PM;
 
             var initialDates = dateRange1;
-            var newDates = dateRange2.MapToDateRange();
+
 
             var reservation = await _parkingService.AddReservationAsync(initialDates);
             var initialBookingReference = reservation?.Reference;
@@ -105,9 +110,9 @@ namespace ParkingReservation.Api.Tests
             var amendReservationRequest = new AmendReservationRequest
             {
                 BookingReference = initialBookingReference,
-                DateRange = newDates,
+                DateRange = _mapper.Map<DateRange>(dateRange2),
             };
-            var controller = new BookingController(_mockLogger, _parkingService);
+            var controller = new BookingController(_mockLogger, _parkingService, _mapper);
             var actionResult = await controller.AmendReservationAsync(amendReservationRequest);
             
             var contentResult = actionResult as OkObjectResult;
@@ -117,8 +122,8 @@ namespace ParkingReservation.Api.Tests
             {
                 Assert.That(contentResult?.StatusCode, Is.EqualTo(expectedStatusCode));
                 Assert.That(reservationResponse?.Reference, Is.EqualTo(initialBookingReference));
-                Assert.That(reservationResponse?.DateRange.StartTime, Is.EqualTo(newDates.StartTime));
-                Assert.That(reservationResponse?.DateRange.EndTime, Is.EqualTo(newDates.EndTime));
+                Assert.That(reservationResponse?.DateRange.StartTime, Is.EqualTo(dateRange2.StartTime));
+                Assert.That(reservationResponse?.DateRange.EndTime, Is.EqualTo(dateRange2.EndTime));
             });
         }
 
@@ -138,12 +143,12 @@ namespace ParkingReservation.Api.Tests
             var initialReservation = await _parkingService.AddReservationAsync(initialDates);
             await CreateMultipleReservations(newDates, _parkingService);
 
-            var bookingController = new BookingController(_mockLogger, _parkingService);
+            var bookingController = new BookingController(_mockLogger, _parkingService, _mapper);
 
             var amendReservationRequest = new AmendReservationRequest
             {
                 BookingReference = initialReservation.Reference,
-                DateRange = newDates.MapToDateRange(),
+                DateRange = _mapper.Map<DateRange>(newDates),
             };
             var actionResult = await bookingController.AmendReservationAsync(amendReservationRequest);
 
@@ -157,7 +162,7 @@ namespace ParkingReservation.Api.Tests
             });
         }
 
-        private static async Task CreateMultipleReservations(Core.Models.DateRange initialDates, IParkingService parkingService)
+        private static async Task CreateMultipleReservations(CoreModels.DatePeriods.DateRange initialDates, IParkingService parkingService)
         {
             var tasks = new List<Task>();
             Enumerable.Range(1,9).ToList()

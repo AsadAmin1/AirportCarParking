@@ -1,8 +1,9 @@
 ﻿using ParkingReservation.Core.Extensions;
-using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Models.DatePeriods;
 using ParkingReservation.Core.TestHelpers;
+using ParkingReservation.Core.Tests.PriceRules;
 
-namespace ParkingReservation.Core.Tests.PriceRules
+namespace ParkingReservation.Core.Tests.DatePeriods.PriceRules
 {
     public class SummerPriceRuleTests
     {

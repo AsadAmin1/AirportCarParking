@@ -1,6 +1,7 @@
 ﻿using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Models.DatePeriods;
 
 namespace ParkingReservation.Core
 {
@@ -52,9 +53,9 @@ namespace ParkingReservation.Core
             return await _bookingService.CancelReservationAsync(bookingReference);
         }
 
-        public async Task<Reservation> AmendReservationAsync(AmendReservationRequest amendReservationRequest)
+        public async Task<Reservation> AmendReservationAsync(AmendReservation amendReservation)
         {
-            var dateRange = amendReservationRequest.DateRange;
+            var dateRange = amendReservation.DateRange;
             var totalCapacity = _bookingService.TotalCapacity;
             var reservations = _bookingService.Reservations;
 
@@ -63,7 +64,7 @@ namespace ParkingReservation.Core
             {
                 var price = _pricingService.GetPrice(dateRange);
 
-                return  await _bookingService.AmendReservationAsync(amendReservationRequest.BookingReference, dateRange, price);
+                return  await _bookingService.AmendReservationAsync(amendReservation.BookingReference, dateRange, price);
             }
 
             throw new NoAvailabilityException("Unfortunately there is no availability for the request date range.");

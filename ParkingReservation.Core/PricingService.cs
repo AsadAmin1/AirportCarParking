@@ -1,6 +1,6 @@
 ﻿using ParkingReservation.Api.Models;
 using ParkingReservation.Core.Interfaces;
-using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Models.DatePeriods;
 
 namespace ParkingReservation.Core
 {

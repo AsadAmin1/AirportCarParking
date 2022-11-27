@@ -1,4 +1,5 @@
 ﻿using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Models.DatePeriods;
 
 namespace ParkingReservation.Core.Interfaces
 {
@@ -10,6 +11,6 @@ namespace ParkingReservation.Core.Interfaces
 
         Task<bool> CancelReservationAsync(string bookingReference);
 
-        Task<Reservation> AmendReservationAsync(AmendReservationRequest amendReservationRequest);
+        Task<Reservation> AmendReservationAsync(AmendReservation amendReservation);
     }
 }

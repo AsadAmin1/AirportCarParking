@@ -7,8 +7,9 @@ using ParkingReservation.Core;
 using ParkingReservation.Core.TestHelpers;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Api.ApiModels;
-using ParkingReservation.Api.Extensions;
 using ParkingReservation.Api.Models;
+using AutoMapper;
+using ParkingReservation.Api.Configuration;
 
 namespace ParkingReservation.Api.Tests
 {
@@ -19,12 +20,14 @@ namespace ParkingReservation.Api.Tests
         private ILogger<AvailabilityController> _mockLogger;
         private IParkingService _parkingService;
         private PricingConfig _pricingConfig;
+        private IMapper _mapper;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             TestConfiguration.Setup();
             _pricingConfig = new PricingConfig(TestConfiguration.Get);
+            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
         }
 
         [SetUp]
@@ -45,9 +48,10 @@ namespace ParkingReservation.Api.Tests
 
             var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
-            var domainDateRange = dateRange.MapToDateRange();
-            var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailabilityAsync(domainDateRange);
+            var request = _mapper.Map<Core.Models.DatePeriods.DateRange, DateRange>(dateRange);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService, _mapper);
+            var actionResult = await controller.GetAvailabilityAsync(request);
 
             var contentResult = actionResult as OkObjectResult;
             var availabilityResponse = contentResult?.Value as AvailabilityResponse;
@@ -68,8 +72,10 @@ namespace ParkingReservation.Api.Tests
 
             var dateRange = TestBookingDates.ElapsedDate;
 
-            var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailabilityAsync(dateRange.MapToDateRange());
+            var request = _mapper.Map<Core.Models.DatePeriods.DateRange, DateRange>(dateRange);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService, _mapper);
+            var actionResult = await controller.GetAvailabilityAsync(request);
 
             var contentResult = actionResult as BadRequestObjectResult;
             var availabilityResponse = contentResult?.Value as AvailabilityResponse;
@@ -89,9 +95,10 @@ namespace ParkingReservation.Api.Tests
             
             var dateRange = TestBookingDates.InvalidDates;
 
-            var domainDateRange = dateRange.MapToDateRange();
-            var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailabilityAsync(domainDateRange);
+            var request = _mapper.Map<Core.Models.DatePeriods.DateRange, DateRange>(dateRange);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService, _mapper);
+            var actionResult = await controller.GetAvailabilityAsync(request);
 
             var contentResult = actionResult as BadRequestObjectResult;
             var availabilityResponse = contentResult?.Value as AvailabilityResponse;
@@ -114,8 +121,10 @@ namespace ParkingReservation.Api.Tests
 
             await _parkingService.AddReservationAsync(dateRange);
 
-            var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResults = await controller.GetAvailabilityAsync(dateRange.MapToDateRange());
+            var request = _mapper.Map<Core.Models.DatePeriods.DateRange, DateRange>(dateRange);
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService, _mapper);
+            var actionResults = await controller.GetAvailabilityAsync(request);
 
             var contentResult = actionResults as OkObjectResult;
             var availabilityResponse = contentResult?.Value as AvailabilityResponse;
@@ -138,8 +147,12 @@ namespace ParkingReservation.Api.Tests
 
             await _parkingService.AddReservationAsync(firstWeek);
 
-            var controller = new AvailabilityController(_mockLogger, _parkingService);
-            var actionResult = await controller.GetAvailabilityAsync(secondWeek.MapToDateRange());
+
+            var request = _mapper.Map<Core.Models.DatePeriods.DateRange, ApiModels.DateRange>(secondWeek);
+
+
+            var controller = new AvailabilityController(_mockLogger, _parkingService, _mapper);
+            var actionResult = await controller.GetAvailabilityAsync(request);
 
             var contentResult = actionResult as OkObjectResult;
             var availabilityResponse = contentResult?.Value as AvailabilityResponse;

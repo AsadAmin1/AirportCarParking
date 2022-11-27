@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using CoreModels = ParkingReservation.Core.Models;
 using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
 using ParkingReservation.Api.Extensions;
 using System.Reflection;
+using AutoMapper;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -20,15 +22,17 @@ namespace ParkingReservation.Api.v1.Controllers
 
         private readonly ILogger<BookingController> _logger;
         private readonly IParkingService _parkingService;
+        private readonly IMapper _mapper;
         private readonly string _messageFormat = $"{0}-{1}";
 
         #endregion
 
         #region Constructors
 
-        public BookingController(ILogger<BookingController> logger, IParkingService parkingService) { 
+        public BookingController(ILogger<BookingController> logger, IParkingService parkingService, IMapper mapper) {
             _logger = logger;
             _parkingService = parkingService;
+            _mapper = mapper;
         }
 
         #endregion
@@ -36,18 +40,18 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Public Methods
 
         [HttpPost]
-        public async Task<IActionResult> CreateReservationAsync([FromBody]DateRange dateRange)
+        public async Task<IActionResult> CreateReservationAsync([FromBody] DateRange dateRange)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
             {
-                var domainDateRange = new Core.Models.DateRange(dateRange.StartTime, dateRange.EndTime);
+                var domainDateRange = _mapper.Map<CoreModels.DatePeriods.DateRange>(dateRange);
 
                 try
                 {
                     var reservationResult = await _parkingService.AddReservationAsync(domainDateRange);
                     if (reservationResult != null)
                     {
-                        var reservation = reservationResult.MapToReservationResponse();
+                        var reservation = _mapper.Map<ReservationResponse>(reservationResult);
                         return new CreatedResult($"parkingreservation/bookings/{reservation.Reference}", reservation);
                     }
 
@@ -96,8 +100,11 @@ namespace ParkingReservation.Api.v1.Controllers
             {
                 try
                 {
-                    var reservation = await _parkingService.AmendReservationAsync(amendReservationRequest.MapToDomainModel());
-                    return Ok(reservation.MapToReservationResponse());
+                    var request = _mapper.Map<CoreModels.AmendReservation>(amendReservationRequest);
+                    var reservation = await _parkingService.AmendReservationAsync(request);
+                    var response = _mapper.Map<ReservationResponse>(reservation);
+
+                    return Ok(response);
                 }
                 catch (Exception ex)
                 {

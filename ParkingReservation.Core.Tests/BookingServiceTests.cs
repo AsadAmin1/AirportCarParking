@@ -1,7 +1,7 @@
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.TestHelpers;
 using ParkingReservation.Core.Exceptions;
-using ParkingReservation.Core.Models;
+using ParkingReservation.Core.Models.DatePeriods;
 
 namespace ParkingReservation.Core.Tests
 {
@@ -134,7 +134,7 @@ namespace ParkingReservation.Core.Tests
             });
         }
 
-        private async Task CreateMultipleReservations(DateRange initialDates, decimal price, BookingService bookingService)
+        private static async Task CreateMultipleReservations(DateRange initialDates, decimal price, BookingService bookingService)
         {
             var tasks = new List<Task>();
             for (int i = 1; i < 10; i++)

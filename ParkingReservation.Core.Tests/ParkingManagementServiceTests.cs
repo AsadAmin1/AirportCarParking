@@ -1,3 +1,4 @@
+using ParkingReservation.Api.Models;
 using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.TestHelpers;
@@ -10,13 +11,21 @@ namespace ParkingReservation.Core.Tests
         private IBookingService _bookingService;
         private IPricingService _pricingService;
         private readonly List<IBookable> _bookableItems = TestBookableItems.Items;
+        private PricingConfig _pricingConfig;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            TestConfiguration.Setup();
+            _pricingConfig = new PricingConfig(TestConfiguration.Get);
+        }
 
         [SetUp]
         public void SetUp()
         {
             _availabilityService = new AvailabilityService();
             _bookingService = new BookingService(TestBookableItems.Items);
-            _pricingService = new PricingService(TestPricingRules.PriceRules);
+            _pricingService = new PricingService(TestPricingRules.PriceRules, _pricingConfig);
         }
 
         [Test]
@@ -29,8 +38,11 @@ namespace ParkingReservation.Core.Tests
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             var actual = await sut.GetAvailabilityAsync(dateRange);
 
-            Assert.That(actual.Spaces, Is.EqualTo(_bookableItems.Count));
-            Assert.That(actual.Price, Is.EqualTo(expectedPrice));
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual.Spaces, Is.EqualTo(_bookableItems.Count));
+                Assert.That(actual.Price, Is.EqualTo(expectedPrice));
+            });
         }
 
         [Test]
@@ -43,8 +55,11 @@ namespace ParkingReservation.Core.Tests
             var sut = new ParkingService(_availabilityService, _bookingService, _pricingService);
             var actual = await sut.GetAvailabilityAsync(dateRange);
 
-            Assert.That(actual.Spaces, Is.EqualTo(_bookableItems.Count));
-            Assert.That(actual.Price, Is.EqualTo(expectedPrice));
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual.Spaces, Is.EqualTo(_bookableItems.Count));
+                Assert.That(actual.Price, Is.EqualTo(expectedPrice));
+            });
         }
 
         [Test]

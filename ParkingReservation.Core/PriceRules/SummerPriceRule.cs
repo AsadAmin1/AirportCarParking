@@ -4,12 +4,22 @@ namespace ParkingReservation.Core.Tests.PriceRules
 {
     public class SummerPriceRule : BasePriceRule 
     {
+        #region Private Fields
+
         private readonly Season _season;
 
-        public SummerPriceRule():base(2m)
+        #endregion
+
+        #region Constructors
+
+        public SummerPriceRule() : base(2m)
         {
             _season = new SummerSeason();
         }
+
+        #endregion
+
+        #region IPriceRule
 
         public override decimal ApplyRule(DateRange dateRange)
         {
@@ -23,5 +33,7 @@ namespace ParkingReservation.Core.Tests.PriceRules
 
             return 0;
         }
+
+        #endregion
     }
 }

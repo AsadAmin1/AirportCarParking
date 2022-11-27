@@ -8,6 +8,7 @@ using ParkingReservation.Core.TestHelpers;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Api.ApiModels;
 using ParkingReservation.Api.Extensions;
+using ParkingReservation.Api.Models;
 
 namespace ParkingReservation.Api.Tests
 {
@@ -15,6 +16,14 @@ namespace ParkingReservation.Api.Tests
     {
         private ILogger<BookingController> _mockLogger;
         private IParkingService _parkingService;
+        private PricingConfig _pricingConfig;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            TestConfiguration.Setup();
+            _pricingConfig = new PricingConfig(TestConfiguration.Get);
+        }
 
         [SetUp]
         public void Setup()
@@ -23,7 +32,7 @@ namespace ParkingReservation.Api.Tests
 
             var availabilityService = new AvailabilityService();
             var bookingService = new BookingService(TestBookableItems.Items);
-            var pricingService = new PricingService(TestPricingRules.PriceRules);
+            var pricingService = new PricingService(TestPricingRules.PriceRules, _pricingConfig);
             _parkingService = new ParkingService(availabilityService, bookingService, pricingService);
         }
 

@@ -37,7 +37,6 @@ namespace ParkingReservation.Core
             if (spaces > 0)
             {
                 var price = _pricingService.GetPrice(dateRange);
-                // TODO: Throw Exception if price is Zero
 
                 var reservation = await _bookingService.AddReservationAsync(dateRange, price);
                 if (reservation != null)
@@ -63,7 +62,6 @@ namespace ParkingReservation.Core
             if (spaces > 0)
             {
                 var price = _pricingService.GetPrice(dateRange);
-                // TODO: Throw Exception if price is Zero
 
                 return  await _bookingService.AmendReservationAsync(amendReservationRequest.BookingReference, dateRange, price);
             }

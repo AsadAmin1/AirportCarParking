@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using ParkingReservation.Api.Models;
 using ParkingReservation.Core;
 using ParkingReservation.Core.Interfaces;
 using ParkingReservation.Core.Models;
@@ -40,9 +41,11 @@ namespace ParkingReservation.Api
                 new WinterPriceRule()
             };
 
+            var pricingConfig = new PricingConfig(Configuration);
+
             services.AddTransient<IAvailabilityService>((services) => new AvailabilityService());
             services.AddSingleton<IBookingService>((services) => new BookingService(BookableItems.Items));
-            services.AddSingleton<IPricingService>((services) => new PricingService(priceRules));
+            services.AddSingleton<IPricingService>((services) => new PricingService(priceRules, pricingConfig));
             services.AddSingleton<IParkingService>((services) => new ParkingService(
                 services.GetRequiredService<IAvailabilityService>(),
                 services.GetRequiredService<IBookingService>(),

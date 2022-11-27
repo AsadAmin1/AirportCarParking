@@ -38,7 +38,7 @@ namespace ParkingReservation.Core
             {
                 var price = _pricingService.GetPrice(dateRange);
 
-                var reservation = await _bookingService.AddReservationAsync(dateRange, price);
+                var reservation = await _bookingService.CreateReservationAsync(dateRange, price);
                 if (reservation != null)
                 {
                     return reservation;

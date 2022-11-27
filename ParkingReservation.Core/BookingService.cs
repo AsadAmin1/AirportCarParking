@@ -32,7 +32,7 @@ namespace ParkingReservation.Core
 
         #region Public Methods
 
-        public async Task<Reservation> AddReservationAsync(DateRange dateRange, decimal price)
+        public async Task<Reservation> CreateReservationAsync(DateRange dateRange, decimal price)
         {
             IBookable item = GetBookableItem(dateRange);
 

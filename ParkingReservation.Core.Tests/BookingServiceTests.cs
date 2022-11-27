@@ -18,7 +18,7 @@ namespace ParkingReservation.Core.Tests
             var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
-            var actual = await sut.AddReservationAsync(dateRange, expectedPrice);
+            var actual = await sut.CreateReservationAsync(dateRange, expectedPrice);
 
             Assert.Multiple(() =>
             {
@@ -41,7 +41,7 @@ namespace ParkingReservation.Core.Tests
             var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
-            var reservation = await sut.AddReservationAsync(dateRange, expectedPrice);
+            var reservation = await sut.CreateReservationAsync(dateRange, expectedPrice);
 
             var actual = await sut.CancelReservationAsync(reservation.Reference);
 
@@ -62,7 +62,7 @@ namespace ParkingReservation.Core.Tests
             var dateRange = TestBookingDates.WinterDates.FirstWeek1PMto1PM;
 
             var sut = new BookingService(bookableItems);
-            var reservation = await sut.AddReservationAsync(dateRange, expectedPrice);
+            var reservation = await sut.CreateReservationAsync(dateRange, expectedPrice);
 
             bool actual = false;
             var ex = Assert.ThrowsAsync<BookingNotFoundException>(async () =>
@@ -91,7 +91,7 @@ namespace ParkingReservation.Core.Tests
             var newPrice = 200m;
 
             var bookingService = new BookingService(bookableItems);
-            var reservation = await bookingService.AddReservationAsync(initialDates, initialPrice);
+            var reservation = await bookingService.CreateReservationAsync(initialDates, initialPrice);
             var initialBookingReference = reservation.Reference;
 
             var amendedReservation = await bookingService.AmendReservationAsync(reservation.Reference, newDates, newPrice);
@@ -118,7 +118,7 @@ namespace ParkingReservation.Core.Tests
             var newPrice = 200m;
 
             var bookingService = new BookingService(bookableItems);
-            var reservation = await bookingService.AddReservationAsync(initialDates, initialPrice);
+            var reservation = await bookingService.CreateReservationAsync(initialDates, initialPrice);
             var initialBookingReference = reservation.Reference;
 
             await CreateMultipleReservations(initialDates, initialPrice, bookingService);
@@ -139,7 +139,7 @@ namespace ParkingReservation.Core.Tests
             var tasks = new List<Task>();
             for (int i = 1; i < 10; i++)
             {
-                tasks.Add(bookingService.AddReservationAsync(initialDates, price));
+                tasks.Add(bookingService.CreateReservationAsync(initialDates, price));
             }
             await Task.WhenAll(tasks);
         }

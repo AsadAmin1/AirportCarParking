@@ -60,7 +60,7 @@ namespace ParkingReservation.Core
 
         public async Task<bool> CancelReservationAsync(string bookingReference)
         {
-            var reservation = await GetReservationAsync(bookingReference);
+            await GetReservationAsync(bookingReference);
             return await Task.FromResult(_reservations.Remove(bookingReference));
         }
 

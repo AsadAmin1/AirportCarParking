@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using ParkingReservation.Api.Configuration;
 using ParkingReservation.Api.Models;
 using ParkingReservation.Core;
 using ParkingReservation.Core.Interfaces;
@@ -34,6 +35,8 @@ namespace ParkingReservation.Api
 
             services.AddVersioning();
             services.AddSwaggerGen();
+
+            services.AddAutoMapper(typeof(MappingProfile));
 
             var priceRules = new List<IPriceRule>()
             {

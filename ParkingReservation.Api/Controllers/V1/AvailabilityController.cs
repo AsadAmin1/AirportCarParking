@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
 using System.Reflection;
 using AutoMapper;
+using System.Net;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -41,6 +42,8 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Public Methods
 
         [HttpGet]
+        [ProducesResponseType(typeof(AvailabilityResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAvailabilityAsync([FromQuery]DateRange dateRange)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))

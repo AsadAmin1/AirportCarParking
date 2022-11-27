@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
 using System.Reflection;
 using AutoMapper;
+using System.Net;
 
 namespace ParkingReservation.Api.v1.Controllers
 {
@@ -39,6 +40,9 @@ namespace ParkingReservation.Api.v1.Controllers
         #region Public Methods
 
         [HttpPost]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateReservationAsync([FromBody] DateRange dateRange)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
@@ -70,6 +74,9 @@ namespace ParkingReservation.Api.v1.Controllers
         }
 
         [HttpDelete("{bookingReference}")]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CancelReservationAsync(string bookingReference)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))
@@ -93,6 +100,9 @@ namespace ParkingReservation.Api.v1.Controllers
         }
 
         [HttpPatch]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ReservationResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AmendReservationAsync([FromBody] AmendReservationRequest amendReservationRequest)
         {
             using (_logger.BeginScope(_messageFormat, GetType().Name, MethodBase.GetCurrentMethod().Name))

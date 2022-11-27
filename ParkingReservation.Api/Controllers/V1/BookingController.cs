@@ -7,7 +7,6 @@ using ParkingReservation.Core.Exceptions;
 using ParkingReservation.Core.Interfaces;
 using System.Threading.Tasks;
 using ParkingReservation.Api.ApiModels;
-using ParkingReservation.Api.Extensions;
 using System.Reflection;
 using AutoMapper;
 

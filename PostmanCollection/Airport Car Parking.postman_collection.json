@@ -107,7 +107,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"bookingReference\": \"7ac84b55-d47b-4e5b-b33b-299755ed1ae1\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -115,7 +115,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:10330/api/v1/booking",
+					"raw": "http://localhost:10330/api/v1/booking/17d0b57d-f1b3-4948-b9cd-d50fd611a33a",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -124,7 +124,8 @@
 					"path": [
 						"api",
 						"v1",
-						"booking"
+						"booking",
+						"17d0b57d-f1b3-4948-b9cd-d50fd611a33a"
 					]
 				}
 			},
